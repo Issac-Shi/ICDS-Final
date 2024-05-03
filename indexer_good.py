@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Jul  5 11:38:58 2014
-
-@author: zzhang
-"""
 import pickle
 
 class Index:

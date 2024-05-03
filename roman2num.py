@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Aug  3 10:13:16 2014
-
-@author: zzhang
-"""
 import random
 import pickle
 

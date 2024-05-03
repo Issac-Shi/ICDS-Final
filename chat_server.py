@@ -1,9 +1,3 @@
-"""
-Created on Tue Jul 22 00:47:05 2014
-
-@author: alina, zzhang
-"""
-
 import time
 import socket
 import select
