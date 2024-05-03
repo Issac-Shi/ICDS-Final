@@ -1,4 +1,4 @@
-# ICDS-Final
+# ICDS Final
 
 **Authors (alphabetical order)**
 <p>Issac Shi (js14019@nyu.edu)<br>
