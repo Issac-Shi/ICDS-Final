@@ -3,7 +3,7 @@ import pickle
 class Index:
     def __init__(self, name):
         self.name = name
-        self.msgs = [];
+        self.msgs = []
         self.index = {}
         self.total_msgs = 0
         self.total_words = 0
@@ -30,10 +30,7 @@ class Index:
         words = m.split()
         self.total_words += len(words)
         for wd in words:
-            if wd not in self.index:
-                self.index[wd] = [l,]
-            else:
-                self.index[wd].append(l)
+            self.index[wd] = self.index.get(wd, []) + [l]
                                      
     def search(self, term):
         msgs = []
@@ -50,7 +47,6 @@ class PIndex(Index):
         roman_int_f.close()
         self.load_poems()
         
-        # load poems
     def load_poems(self):
         lines = open(self.name, 'r').readlines()
         for l in lines:
@@ -73,7 +69,6 @@ class PIndex(Index):
                 break
             poem.append(this_line)
             go_line += 1
-        # poem = "\n".join(poem)
         return poem
     
 if __name__ == "__main__":

@@ -11,8 +11,8 @@ class Roman2num:
     def build_table(self):
         self.f = open(self.fname, 'r')
         lines = self.f.readlines()
-        for t in lines:
-            items = t.split(':')
+        for line in lines:
+            items = line.split(':')
             items = [x.strip() for x in items]
             rank = int(items[0])
             roman_numeral = items[1]
@@ -32,12 +32,7 @@ if __name__ == "__main__":
     
     for i in range(10):
         x = random.randint(0, 20) + 1
-#        x = i+1
         s = r.int2roman[x]
         print(x, s)
         
     r.write_table()
-    
-
-                
-            
