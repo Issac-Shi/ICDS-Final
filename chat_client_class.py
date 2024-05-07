@@ -4,6 +4,7 @@ import select
 import sys
 import json
 from chat_utils import *
+from GUI import *
 import client_state_machine as csm
 
 import threading
@@ -30,6 +31,7 @@ class Client:
         svr = SERVER if self.args.d == None else (self.args.d, CHAT_PORT)
         self.socket.connect(svr)
         self.sm = csm.ClientSM(self.socket)
+        self.gui = GUI(self.send, self.recv, self.sm, self.socket)
         reading_thread = threading.Thread(target=self.read_input)
         reading_thread.daemon = True
         reading_thread.start()
@@ -89,17 +91,18 @@ class Client:
 
     def run_chat(self):
         self.init_chat()
-        self.system_msg += 'Welcome to ICS chat\n'
-        self.system_msg += 'Please enter your name: '
-        self.output()
-        while self.login() != True:
-            self.output()
-        self.system_msg += 'Welcome, ' + self.get_name() + '!'
-        self.output()
-        while self.sm.get_state() != S_OFFLINE:
-            self.proc()
-            self.output()
-            time.sleep(CHAT_WAIT)
+        self.gui.run()
+        # self.system_msg += 'Welcome to ICS chat\n'
+        # self.system_msg += 'Please enter your name: '
+        # self.output()
+        # while self.login() != True:
+        #     self.output()
+        # self.system_msg += 'Welcome, ' + self.get_name() + '!'
+        # self.output()
+        # while self.sm.get_state() != S_OFFLINE:
+        #     self.proc()
+        #     self.output()
+        #     time.sleep(CHAT_WAIT) 
         self.quit()
 
 #==============================================================================
