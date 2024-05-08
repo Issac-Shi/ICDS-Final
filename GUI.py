@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import Tk, Toplevel, Label, Entry, Text, Button, font
 from chat_utils import *
 import json
+import snake
 
 # GUI class for the chat
 class GUI:
@@ -22,7 +23,7 @@ class GUI:
         self.setup_fonts()
         self.setup_colors()
         self.users = {}
-        
+
     def setup_fonts(self):
         self.base_font = font.Font(family="Helvetica", size=16)
         self.header_font = font.Font(family="Helvetica", size=20, weight="bold")
@@ -68,7 +69,7 @@ class GUI:
         Label(self.login, text = "Enter Password", font = self.base_font, fg = self.fg_color, bg = self.bg_color).pack()
 
         # Password Entry
-        self.entryPassword = Entry(self.login, font = self.base_font, fg = self.fg_color, bg = self.entry_bg_color)
+        self.entryPassword = Entry(self.login, font = self.base_font, fg = self.fg_color, bg = self.entry_bg_color, show="*")
         self.entryPassword.pack(ipadx=20, ipady=5, pady=(0, 20))
          
         # Login Button
@@ -87,6 +88,10 @@ class GUI:
                 self.popup("Registration successful!")
             else:
                 self.popup("Username already exists...")
+
+    def open_turtle_game():
+        game_thread = threading.Thread(target=snake.run_snake_game())
+        game_thread.start()
 
     def popup(self, msg):
         popup = Toplevel()
@@ -132,29 +137,39 @@ class GUI:
         self.labelHead = Label(self.Window, bg=self.bg_color, fg=self.fg_color, text=self.name, font=self.header_font, pady=5)
         self.labelHead.pack(fill='x')
 
+        # Game launch button (not implemented)
+        self.game_button = Button(self.labelHead, text="Play Game", font=self.base_font, fg=self.fg_color, bg=self.button_color)
+        self.game_button.pack(side='right', padx=10)
+
+        # Chat Area
         self.textCons = Text(self.Window, width=20, height=2, bg=self.entry_bg_color, fg=self.fg_color, font=self.base_font, padx=5, pady=5)
         self.textCons.pack(expand=True, fill=BOTH, padx=10, pady=10)
         
+        # Bottom Label
         self.labelBottom = Label(self.Window, bg = self.bg_color, height = 100)
         self.labelBottom.pack(fill='x')
         
+        # Message Entry Box
         self.entryMsg = Entry(self.labelBottom, bg=self.entry_bg_color, fg = self.fg_color, font = self.base_font)
         self.entryMsg.pack(side=LEFT, fill='x', expand=True, padx=10, pady=10)
         self.entryMsg.focus()
 
-        self.entryMsg.bind("<Return>", lambda x: self.sendButton(self.entryMsg.get()))
+        # Send Button
+        self.entryMsg.bind("<Return>", lambda: self.send(self.entryMsg.get()))
 
-        self.buttonMsg = Button(self.labelBottom, text = "Send", font = self.base_font, bg=self.button_color, fg=self.fg_color,
-                                command = lambda : self.sendButton(self.entryMsg.get()))
+        self.buttonMsg = Button(self.labelBottom, text = "SEND", font = self.base_font, bg=self.button_color, fg=self.fg_color,
+                                command = lambda: self.send(self.entryMsg.get()))
         self.buttonMsg.pack(side=RIGHT, padx=10, pady=10)
 
+        # Scrollbar
         scrollbar = Scrollbar(self.textCons)
         scrollbar.pack(side=RIGHT, fill='y')
         self.textCons.config(yscrollcommand = scrollbar.set)
         scrollbar.config(command = self.textCons.yview)
         self.textCons.config(state = DISABLED)
-  
-    def sendButton(self, msg):
+    
+    # Function to send message
+    def send(self, msg):
         self.textCons.config(state = DISABLED)
         self.my_msg = msg
         self.entryMsg.delete(0, END)
