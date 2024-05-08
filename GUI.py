@@ -21,6 +21,7 @@ class GUI:
         self.system_msg = ""
         self.setup_fonts()
         self.setup_colors()
+        self.users = {}
         
     def setup_fonts(self):
         self.base_font = font.Font(family="Helvetica", size=16)
@@ -31,6 +32,17 @@ class GUI:
         self.fg_color = "#333333" # Dark grey for text
         self.button_color = "#4CAF50" # Green for buttons
         self.entry_bg_color = "#F0F0F0" # Light grey for entry fields
+
+    def verify_login(self, username, password):
+        # Simple verification against the local dictionary
+        return self.users.get(username) == password
+
+    def register_user(self, username, password):
+        # Add user to the dictionary (in real application, securely send this to the server for registration)
+        if username in self.users:
+            return False
+        self.users[username] = password
+        return True
 
     def login(self):
         # Login Window
@@ -58,35 +70,57 @@ class GUI:
         # Password Entry
         self.entryPassword = Entry(self.login, font = self.base_font, fg = self.fg_color, bg = self.entry_bg_color)
         self.entryPassword.pack(ipadx=20, ipady=5, pady=(0, 20))
-        
+         
         # Login Button
-        Button(self.login, text = "LOGIN", font = self.base_font, fg = self.fg_color, bg = self.button_color, command = lambda: self.goAhead(self.entryName.get())).pack(pady=(0, 20))
-        
+        Button(self.login, text = "LOGIN", font = self.base_font, fg = self.fg_color, bg = self.button_color, 
+               command = lambda: self.goAhead(self.entryName.get(), self.entryPassword.get())).pack(pady=(0, 20))
+         
         # Register Button
-        Button(self.login, text = "REGISTER", font = self.base_font, fg = self.fg_color, bg = self.button_color).pack(pady=(0, 20))
+        Button(self.login, text="REGISTER", font=self.base_font, fg=self.fg_color, bg=self.button_color, 
+               command=lambda: self.handle_registration(self.entryName.get(), self.entryPassword.get())).pack(pady=(0, 20))
         
         self.Window.mainloop()
-  
-    def goAhead(self, name):
+    
+    def handle_registration(self, username, password):
+        if len(username) > 0 and len(password) > 0:
+            if self.register_user(username, password):
+                self.popup("Registration successful")
+            else:
+                self.popup("Username already exists")
+
+    def popup(self, msg):
+        popup = Toplevel()
+        popup.title("ATTENTION")
+        popup.geometry("200x100")
+        popup.configure(bg = self.bg_color)
+        Label(popup, text = msg, font = self.base_font, fg = self.fg_color, bg = self.bg_color).pack(pady=(20, 10))
+        Button(popup, text = "OK", font = self.base_font, fg = self.fg_color, bg = self.button_color, command = popup.destroy).pack(pady=(0, 20))
+
+    def goAhead(self, name, password):
         if len(name) > 0:
-            try:
-                msg = json.dumps({"action":"login", "name": name})
-                self.send(msg)
-                response = json.loads(self.recv())
-                if response["status"] == 'ok':
-                    self.login.destroy()
-                    self.sm.set_state(S_LOGGEDIN)
-                    self.sm.set_myname(name)
-                    self.layout(name)
-                    self.textCons.config(state = NORMAL)
-                    self.textCons.insert(END, f"{menu}\n\n")
-                    self.textCons.config(state = DISABLED)
-                    self.textCons.see(END)
-                    
-            except Exception as e:
-                print(f"Erorr: {e}")
-            threading.Thread(target=self.proc, daemon=True).start()
-  
+            if self.verify_login(name, password):
+                try:
+                    msg = json.dumps({"action":"login", "name": name})
+                    self.send(msg)
+                    response = json.loads(self.recv())
+                    if response["status"] == 'ok':
+                        self.login.destroy()
+                        self.sm.set_state(S_LOGGEDIN)
+                        self.sm.set_myname(name)
+                        self.layout(name)
+                        self.textCons.config(state = NORMAL)
+                        self.textCons.insert(END, f"{menu}\n\n")
+                        self.textCons.config(state = DISABLED)
+                        self.textCons.see(END)
+
+                except Exception as e:
+                    print(f"Erorr: {e}")
+
+                threading.Thread(target=self.proc, daemon=True).start()
+            
+            else:
+                self.popup("Invalid credentials")
+
     def layout(self,name):
         self.name = name
         self.Window.deiconify()
