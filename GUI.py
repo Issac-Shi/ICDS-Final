@@ -35,13 +35,13 @@ class GUI:
 
     def verify_login(self, username, password):
         # Simple verification against the local dictionary
-        return self.users.get(username) == password
+        return self.users.get(username) == hash_password(password)
 
     def register_user(self, username, password):
-        # Add user to the dictionary (in real application, securely send this to the server for registration)
+        # Add user to the dictionary
         if username in self.users:
             return False
-        self.users[username] = password
+        self.users[username] = hash_password(password)
         return True
 
     def login(self):
@@ -84,9 +84,9 @@ class GUI:
     def handle_registration(self, username, password):
         if len(username) > 0 and len(password) > 0:
             if self.register_user(username, password):
-                self.popup("Registration successful")
+                self.popup("Registration successful!")
             else:
-                self.popup("Username already exists")
+                self.popup("Username already exists...")
 
     def popup(self, msg):
         popup = Toplevel()
@@ -119,7 +119,7 @@ class GUI:
                 threading.Thread(target=self.proc, daemon=True).start()
             
             else:
-                self.popup("Invalid credentials")
+                self.popup("Invalid credentials!")
 
     def layout(self,name):
         self.name = name
@@ -133,7 +133,7 @@ class GUI:
         self.labelHead.pack(fill='x')
 
         self.textCons = Text(self.Window, width=20, height=2, bg=self.entry_bg_color, fg=self.fg_color, font=self.base_font, padx=5, pady=5)
-        self.textCons.pack(expand=True, fill=BOTH, padx=10, pady=10)          
+        self.textCons.pack(expand=True, fill=BOTH, padx=10, pady=10)
         
         self.labelBottom = Label(self.Window, bg = self.bg_color, height = 100)
         self.labelBottom.pack(fill='x')

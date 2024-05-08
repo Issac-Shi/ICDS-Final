@@ -1,5 +1,7 @@
 import socket
 import time
+import hashlib
+
 
 # IP address of the chat server
 CHAT_IP = socket.gethostbyname(socket.gethostname())
@@ -69,6 +71,10 @@ def myrecv(s):
             break
         msg += text
     return (msg)
+
+def hash_password(password):
+    sha_signature = hashlib.sha256((password).encode()).hexdigest()
+    return sha_signature
 
 def text_proc(text, user):
     # get the client time, in the format of YYYY-MM-DD HH:MM
