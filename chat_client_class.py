@@ -49,7 +49,6 @@ class Client:
         read, write, error = select.select([self.socket], [], [], 0)
         my_msg = ''
         peer_msg = []
-        #peer_code = M_UNDEF    for json data, peer_code is redundant
         if len(self.console_input) > 0:
             my_msg = self.console_input.pop(0)
         if self.socket in read:
@@ -77,14 +76,14 @@ class Client:
             elif response["status"] == 'duplicate':
                 self.system_msg += 'Duplicate username, try again'
                 return False
-        else:               # fix: dup is only one of the reasons
+        else:
            return(False)
 
 
     def read_input(self):
         while True:
             text = sys.stdin.readline()[:-1]
-            self.console_input.append(text) # no need for lock, append is thread safe
+            self.console_input.append(text)
 
     def print_instructions(self):
         self.system_msg += menu
@@ -92,22 +91,8 @@ class Client:
     def run_chat(self):
         self.init_chat()
         self.gui.run()
-        # self.system_msg += 'Welcome to ICS chat\n'
-        # self.system_msg += 'Please enter your name: '
-        # self.output()
-        # while self.login() != True:
-        #     self.output()
-        # self.system_msg += 'Welcome, ' + self.get_name() + '!'
-        # self.output()
-        # while self.sm.get_state() != S_OFFLINE:
-        #     self.proc()
-        #     self.output()
-        #     time.sleep(CHAT_WAIT) 
         self.quit()
 
-#==============================================================================
-# main processing loop
-#==============================================================================
     def proc(self):
         my_msg, peer_msg = self.get_msgs()
         self.system_msg += self.sm.proc(my_msg, peer_msg)

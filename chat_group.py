@@ -1,22 +1,7 @@
 S_ALONE = 0
 S_TALKING = 1
 
-#==============================================================================
-# Group class:
-# member fields:
-#   - An array of items, each a Member class
-#   - A dictionary that keeps who is a chat group
-# member functions:
-#    - join: first time in
-#    - leave: leave the system, and the group
-#    - list_my_peers: who is in chatting with me?
-#    - list_all: who is in the system, and the chat groups
-#    - connect: connect to a peer in a chat group, and become part of the group
-#    - disconnect: leave the chat group but stay in the system
-#==============================================================================
-
 class Group:
-
     def __init__(self):
         self.members = {}
         self.chat_grps = {}
@@ -46,7 +31,7 @@ class Group:
 
     def connect(self, me, peer):
         peer_in_group = False
-        #if peer is in a group, join it
+        # if peer is in a group, join it
         peer_in_group, group_key = self.find_group(peer)
         if peer_in_group == True:
             print(peer, "is talking already, connect!")
@@ -80,20 +65,12 @@ class Group:
 
     def list_all(self):
         # a simple minded implementation
-        full_list = "Users: ------------" + "\n"
-        full_list += str(self.members) + "\n"
-        full_list += "Groups: -----------" + "\n"
-        full_list += str(self.chat_grps) + "\n"
+        full_list = ""
+        full_list += "Users:\n"
+        full_list += f"{str(self.members)}\n"
+        full_list += "Groups:\n"
+        full_list += f"{str(self.chat_grps)}\n"
         return full_list
-
-    def list_all2(self, me):
-        print("Users: ------------")
-        print(self.members)
-        print("Groups: -----------")
-        print(self.chat_grps, "\n")
-        member_list = str(self.members)
-        grp_list = str(self.chat_grps)
-        return member_list, grp_list
 
     def list_me(self, me):
         # return a list, "me" followed by other peers in my group
@@ -112,6 +89,5 @@ if __name__ == "__main__":
     g.join('a')
     g.join('b')
     print(g.list_all())
-    g.list_all2('a')
     g.connect('a', 'b')
     print(g.list_all())

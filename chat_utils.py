@@ -6,13 +6,14 @@ CHAT_IP = socket.gethostbyname(socket.gethostname())
 CHAT_PORT = 1112
 SERVER = (CHAT_IP, CHAT_PORT)
 
-menu = "Choose one of the following commands:\n \
-        time: calendar time in the system\n \
-        who: to find out who else are there\n \
-        c _peer_: to connect to the _peer_ and chat\n \
-        ? _term_: to search your chat logs where _term_ appears\n \
-        p _#_: to get number <#> sonnet\n \
-        q: to leave the chat system\n"
+menu = """Choose one of the following commands:
+time: Calendar time in the system.
+who: Find out who else is connected.
+c[peer]: Connect to the [peer] and start chatting.
+?[term]: Search your chat logs for occurrences of [term].
+p[#]: Retrieve sonnet number [#].
+q: Leave the chat system.
+"""
 
 S_OFFLINE   = 0
 S_CONNECTED = 1
@@ -34,10 +35,10 @@ def print_state(state):
     elif state == S_CHATTING:
         print('Chatting')
     else:
-        print('Error: wrong state')
+        print('Error! Wrong State!')
 
 def mysend(s, msg):
-    #append size to message and send it
+    # append size to message and send it
     msg = ('0' * SIZE_SPEC + str(len(msg)))[-SIZE_SPEC:] + str(msg)
     msg = msg.encode()
     total_sent = 0
@@ -70,6 +71,6 @@ def myrecv(s):
     return (msg)
 
 def text_proc(text, user):
-    # get the client time, in the format of YYYY/MM/DD, HH:MM
-    client_time = time.strftime('%Y/%m/%d, %H:%M', time.localtime())
+    # get the client time, in the format of YYYY-MM-DD HH:MM
+    client_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
     return(f'({client_time}) {user}: {text}') # message goes directly to screen

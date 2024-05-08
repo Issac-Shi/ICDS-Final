@@ -16,12 +16,11 @@ class Server:
         self.logged_sock2name = {} # dictionary mapping socket to user name
         self.all_sockets = []
         self.group = grp.Group()
-        # start server
-        self.server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind(SERVER)
         self.server.listen(5)
         self.all_sockets.append(self.server)
-        self.indices={}
+        self.indices = {}
         self.sonnet = indexer.PIndex("AllSonnets.txt")
     
     def new_client(self, sock):
@@ -36,7 +35,6 @@ class Server:
         try:
             msg = json.loads(myrecv(sock))
             if len(msg) > 0:
-
                 if msg["action"] == "login":
                     name = msg["name"]
                     if self.group.is_member(name) != True:
@@ -57,18 +55,23 @@ class Server:
                         print(name + ' logged in')
                         self.group.join(name)
                         mysend(sock, json.dumps({"action":"login", "status":"ok"}))
-                    else: #a client under this name has already logged in
+                    
+                    # a client under this name has already logged in
+                    else:
                         mysend(sock, json.dumps({"action":"login", "status":"duplicate"}))
-                        print(name + ' duplicate login attempt')
+                        print(f'duplicate login attempt: {name}')
                 else:
-                    print ('wrong code received')
-            else: #client died unexpectedly
+                    print('wrong code received')
+            
+            # client died unexpectedly
+            else:
                 self.logout(sock)
+
         except:
             self.all_sockets.remove(sock)
 
     def logout(self, sock):
-        #remove sock from all lists
+        # remove sock from all lists
         name = self.logged_sock2name[sock]
         pkl.dump(self.indices[name], open(name + '.idx','wb'))
         del self.indices[name]
@@ -104,12 +107,11 @@ class Server:
             elif msg["action"] == "exchange":
                 from_name = self.logged_sock2name[from_sock]
                 the_guys = self.group.list_me(from_name)
-                #said = msg["from"]+msg["message"]
-                said2 = text_proc(msg["message"], from_name)
-                self.indices[from_name].add_msg_and_index(said2)
+                said = text_proc(msg["message"], from_name)
+                self.indices[from_name].add_msg_and_index(said)
                 for g in the_guys[1:]:
                     to_sock = self.logged_name2sock[g]
-                    self.indices[g].add_msg_and_index(said2)
+                    self.indices[g].add_msg_and_index(said)
                     mysend(to_sock, json.dumps({"action":"exchange", "from":msg["from"], "message":msg["message"]}))
 
             elif msg["action"] == "list":
@@ -127,14 +129,13 @@ class Server:
                 mysend(from_sock, json.dumps({"action":"poem", "results":poem}))
 
             elif msg["action"] == "time":
-                ctime = time.strftime('%d.%m.%y,%H:%M', time.localtime())
+                ctime = time.strftime('%y-%m-%d %h:%m', time.localtime())
                 mysend(from_sock, json.dumps({"action":"time", "results":ctime}))
 
             elif msg["action"] == "search":
                 term = msg["target"]
                 from_name = self.logged_sock2name[from_sock]
                 print('search for ' + from_name + ' for ' + term)
-                # search_rslt = (self.indices[from_name].search(term))
                 search_rslt = '\n'.join([x[-1] for x in self.indices[from_name].search(term)])
                 print('server side search: ' + search_rslt)
                 mysend(from_sock, json.dumps({"action":"search", "results":search_rslt}))
@@ -144,13 +145,15 @@ class Server:
                 the_guys = self.group.list_me(from_name)
                 self.group.disconnect(from_name)
                 the_guys.remove(from_name)
-                if len(the_guys) == 1:  # only one left
+                
+                # only one left
+                if len(the_guys) == 1:
                     g = the_guys.pop()
                     to_sock = self.logged_name2sock[g]
                     mysend(to_sock, json.dumps({"action":"disconnect"}))
 
         else:
-            #client died unexpectedly
+            # client died unexpectedly
             self.logout(from_sock)
 
     def run(self):
@@ -167,12 +170,12 @@ class Server:
                    self.login(newc)
            print('checking for new connections...')
            if self.server in read :
-               #new client request
+               # new client request
                sock, address=self.server.accept()
                self.new_client(sock)
 
 def main():
-    server=Server()
+    server = Server()
     server.run()
 
 main()

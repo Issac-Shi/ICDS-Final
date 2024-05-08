@@ -27,32 +27,43 @@ class GUI:
         self.header_font = font.Font(family="Helvetica", size=20, weight="bold")
 
     def setup_colors(self):
-        self.bg_color = "#FFFFFF"  # White for background
-        self.fg_color = "#333333"  # Dark grey for text
-        self.button_color = "#4CAF50"  # Green for buttons
-        self.entry_bg_color = "#F0F0F0"  # Light grey for entry fields
+        self.bg_color = "#FFFFFF" # White for background
+        self.fg_color = "#333333" # Dark grey for text
+        self.button_color = "#4CAF50" # Green for buttons
+        self.entry_bg_color = "#F0F0F0" # Light grey for entry fields
 
     def login(self):
-        # login window
+        # Login Window
         self.login = Toplevel()
-        # set the title
+
+        # Title
         self.login.title("Login")
         self.login.resizable(width = False, height = False)
-        self.login.configure(width = 400, height = 300, bg = self.bg_color)
+        self.login.geometry("400x400")
+        self.login.configure(bg = self.bg_color)
         
         # Instruction Label
-        Label(self.login, text = "Please login to continue", font = self.header_font, fg = self.fg_color, bg = self.bg_color).pack(pady=(20, 10))
+        Label(self.login, text = "Please Login to Continue", font = self.header_font, fg = self.fg_color, bg = self.bg_color).pack(pady=(20, 10))
         
-        # Name Label
-        Label(self.login, text = "Name: ", font = self.base_font, fg = self.fg_color, bg = self.bg_color).pack()
+        # Username Label
+        Label(self.login, text = "Enter Username", font = self.base_font, fg = self.fg_color, bg = self.bg_color).pack()
           
         # Username Entry
         self.entryName = Entry(self.login, font = self.base_font, fg = self.fg_color, bg = self.entry_bg_color)
         self.entryName.pack(ipadx=20, ipady=5, pady=(0, 20))
-        self.entryName.focus()
-          
-        # Continue Button
-        Button(self.login, text = "CONTINUE", font = self.base_font, fg = self.fg_color, bg = self.button_color, command = lambda: self.goAhead(self.entryName.get())).pack(pady=(0, 20))
+
+        # Password Label
+        Label(self.login, text = "Enter Password", font = self.base_font, fg = self.fg_color, bg = self.bg_color).pack()
+
+        # Password Entry
+        self.entryPassword = Entry(self.login, font = self.base_font, fg = self.fg_color, bg = self.entry_bg_color)
+        self.entryPassword.pack(ipadx=20, ipady=5, pady=(0, 20))
+        
+        # Login Button
+        Button(self.login, text = "LOGIN", font = self.base_font, fg = self.fg_color, bg = self.button_color, command = lambda: self.goAhead(self.entryName.get())).pack(pady=(0, 20))
+        
+        # Register Button
+        Button(self.login, text = "REGISTER", font = self.base_font, fg = self.fg_color, bg = self.button_color).pack(pady=(0, 20))
         
         self.Window.mainloop()
   
@@ -75,8 +86,9 @@ class GUI:
         self.name = name
         self.Window.deiconify()
         self.Window.title("CHATROOM")
-        self.Window.resizable(width=True, height=True)
-        self.Window.configure(width=600, height=650, bg=self.bg_color)
+        self.Window.resizable(width=False, height=False)
+        self.Window.geometry('600x600')
+        self.Window.configure(bg=self.bg_color)
 
         self.labelHead = Label(self.Window, bg=self.bg_color, fg=self.fg_color, text=self.name, font=self.header_font, pady=5)
         self.labelHead.pack(fill='x')
@@ -114,6 +126,7 @@ class GUI:
             peer_msg = []
             if self.socket in read:
                 peer_msg = self.recv()
+
             if len(self.my_msg) > 0 or len(peer_msg) > 0:
                 self.system_msg += self.sm.proc(self.my_msg, peer_msg)
                 self.my_msg = ""
