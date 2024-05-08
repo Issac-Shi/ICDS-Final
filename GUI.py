@@ -78,6 +78,11 @@ class GUI:
                     self.sm.set_state(S_LOGGEDIN)
                     self.sm.set_myname(name)
                     self.layout(name)
+                    self.textCons.config(state = NORMAL)
+                    self.textCons.insert(END, f"{menu}\n\n")
+                    self.textCons.config(state = DISABLED)
+                    self.textCons.see(END)
+                    
             except Exception as e:
                 print(f"Erorr: {e}")
             threading.Thread(target=self.proc, daemon=True).start()
