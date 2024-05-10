@@ -151,10 +151,10 @@ class GUI:
         self.entryMsg.focus()
 
         # Send Button
-        self.entryMsg.bind("<Return>", lambda x: self.send(self.entryMsg.get()))
+        self.entryMsg.bind("<Return>", lambda x: self.sendbutton(self.entryMsg.get()))
 
         self.buttonMsg = Button(self.labelBottom, text="SEND", font=self.base_font, bg=self.button_color, fg=self.fg_color,
-                                command = lambda: self.send(self.entryMsg.get()))
+                                command = lambda: self.sendbutton(self.entryMsg.get()))
         self.buttonMsg.pack(side=RIGHT, padx=10, pady=10)
 
         # Scrollbar
@@ -165,7 +165,7 @@ class GUI:
         self.textCons.config(state = DISABLED)
     
     # Function to send message
-    def send(self, msg):
+    def sendbutton(self, msg):
         self.textCons.config(state = DISABLED)
         self.my_msg = msg
         self.entryMsg.delete(0, END)
