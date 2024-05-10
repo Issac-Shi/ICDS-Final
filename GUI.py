@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter import Tk, Toplevel, Label, Entry, Text, Button, font
 from chat_utils import *
 import json
-import snake
+from snake import run_snake_game
 
 # GUI class for the chat
 class GUI:
@@ -89,10 +89,6 @@ class GUI:
             else:
                 self.popup("Username already exists...")
 
-    def open_turtle_game():
-        game_thread = threading.Thread(target=snake.run_snake_game())
-        game_thread.start()
-
     def popup(self, msg):
         popup = Toplevel()
         popup.title("ATTENTION")
@@ -137,8 +133,8 @@ class GUI:
         self.labelHead = Label(self.Window, bg=self.bg_color, fg=self.fg_color, text=self.name, font=self.header_font, pady=5)
         self.labelHead.pack(fill='x')
 
-        # Game launch button (not implemented)
-        self.game_button = Button(self.labelHead, text="Play Game", font=self.base_font, fg=self.fg_color, bg=self.button_color)
+        # Game launch button
+        self.game_button = Button(self.labelHead, text="Play Game", font=self.base_font, fg=self.fg_color, bg=self.button_color, command=lambda: run_snake_game())
         self.game_button.pack(side='right', padx=10)
 
         # Chat Area
@@ -150,14 +146,14 @@ class GUI:
         self.labelBottom.pack(fill='x')
         
         # Message Entry Box
-        self.entryMsg = Entry(self.labelBottom, bg=self.entry_bg_color, fg = self.fg_color, font = self.base_font)
+        self.entryMsg = Entry(self.labelBottom, bg=self.entry_bg_color, fg=self.fg_color, font=self.base_font)
         self.entryMsg.pack(side=LEFT, fill='x', expand=True, padx=10, pady=10)
         self.entryMsg.focus()
 
         # Send Button
-        self.entryMsg.bind("<Return>", lambda: self.send(self.entryMsg.get()))
+        self.entryMsg.bind("<Return>", lambda x: self.send(self.entryMsg.get()))
 
-        self.buttonMsg = Button(self.labelBottom, text = "SEND", font = self.base_font, bg=self.button_color, fg=self.fg_color,
+        self.buttonMsg = Button(self.labelBottom, text="SEND", font=self.base_font, bg=self.button_color, fg=self.fg_color,
                                 command = lambda: self.send(self.entryMsg.get()))
         self.buttonMsg.pack(side=RIGHT, padx=10, pady=10)
 
