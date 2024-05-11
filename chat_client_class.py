@@ -6,9 +6,7 @@ import json
 from chat_utils import *
 from GUI import *
 import client_state_machine as csm
-from cryptography.hazmat.primitives.asymmetric import dh
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
+
 import threading
 
 class Client:
@@ -20,29 +18,11 @@ class Client:
         self.local_msg = ''
         self.peer_msg = ''
         self.args = args
-        self.dh_params = dh.generate_parameters(generator=2, key_size=2048, backend=default_backend())
-        self.private_key = self.dh_params.generate_private_key()
-        self.public_key = self.private_key.public_key()
-        self.server_public_key = None
-        self.shared_key = None
 
     def quit(self):
         self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
 
-    def send_public_key(self):
-        public_key_bytes = self.public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
-        msg = json.dumps({"action":"public_key", "public_key":public_key_bytes.decode()})
-        self.send(msg)
-
-    def recv_public_key(self):
-        response = json.loads(self.recv())
-        self.server_public_key = serialization.load_pem_public_key(response["public_key"].encode(), default_backend())
-
-    def generate_shared_key(self):
-        shared_key = self.private_key.exchange(self.server_public_key)
-        self.shared_key = shared_key
-    
     def get_name(self):
         return self.name
 
@@ -87,18 +67,18 @@ class Client:
             msg = json.dumps({"action":"login", "name":self.name})
             self.send(msg)
             response = json.loads(self.recv())
-
             if response["status"] == 'ok':
                 self.state = S_LOGGEDIN
                 self.sm.set_state(S_LOGGEDIN)
                 self.sm.set_myname(self.name)
                 self.print_instructions()
-                return True
+                return (True)
             elif response["status"] == 'duplicate':
                 self.system_msg += 'Duplicate username, try again'
                 return False
         else:
-           return False
+           return(False)
+
 
     def read_input(self):
         while True:
