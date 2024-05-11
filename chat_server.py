@@ -8,9 +8,6 @@ import json
 import pickle as pkl
 from chat_utils import *
 import chat_group as grp
-from cryptography.hazmat.primitives.asymmetric import dh
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
 
 class Server:
     def __init__(self):
@@ -25,26 +22,7 @@ class Server:
         self.all_sockets.append(self.server)
         self.indices = {}
         self.sonnet = indexer.PIndex("AllSonnets.txt")
-
-        self.dh_params = dh.generate_parameters(generator=2, key_size=2048, backend=default_backend())
-        self.private_key = self.dh_params.generate_private_key()
-        self.pubilc_key = self.private_key.public_key()
-        self.client_public_key = None
-        self.shared_key = None
     
-    def send_public_key(self, sock):
-        public_key_bytes = self.public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
-        msg = json.dumps({"action":"public_key", "public_key":public_key_bytes.decode()})
-        mysend(sock, msg)
-        
-    def recv_public_key(self, sock):
-        response = json.loads(myrecv(sock))
-        self.client_public_key = serialization.load_pem_public_key(response["public_key"].encode(), default_backend())
-
-    def generate_shared_key(self):
-        shared_key = self.private_key.exchange(self.client_public_key)
-        self.shared_key = shared_key
-
     def new_client(self, sock):
         # add to all sockets and to new clients
         print('new client...')

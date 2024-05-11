@@ -87,17 +87,18 @@ class Client:
             msg = json.dumps({"action":"login", "name":self.name})
             self.send(msg)
             response = json.loads(self.recv())
+
             if response["status"] == 'ok':
                 self.state = S_LOGGEDIN
                 self.sm.set_state(S_LOGGEDIN)
                 self.sm.set_myname(self.name)
                 self.print_instructions()
-                return (True)
+                return True
             elif response["status"] == 'duplicate':
                 self.system_msg += 'Duplicate username, try again'
                 return False
         else:
-           return(False)
+           return False
 
     def read_input(self):
         while True:

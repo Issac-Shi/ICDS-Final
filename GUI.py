@@ -1,7 +1,6 @@
 # import all the required modules
 import threading
 import select
-import random
 from tkinter import *
 from tkinter import Tk, Toplevel, Label, Entry, Text, Button, font
 from chat_utils import *
