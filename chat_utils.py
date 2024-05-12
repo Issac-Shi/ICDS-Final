@@ -5,11 +5,13 @@ import hashlib
 
 # IP address of the chat server
 CHAT_IP = socket.gethostbyname(socket.gethostname())
+# CHAT_IP = '10.209.86.232' # Lewis' IP
 CHAT_PORT = 1112
 SERVER = (CHAT_IP, CHAT_PORT)
 
 menu = """Choose one of the following commands:
 time: Calendar time in the system.
+rank: Display the rank board.
 who: Find out who else is connected.
 c[peer]: Connect to the [peer] and start chatting.
 ?[term]: Search your chat logs for occurrences of [term].

@@ -1,4 +1,3 @@
-import time
 import socket
 import select
 import sys
@@ -6,7 +5,6 @@ import json
 from chat_utils import *
 from GUI import *
 import client_state_machine as csm
-
 import threading
 
 class Client:
@@ -52,7 +50,7 @@ class Client:
         if len(self.console_input) > 0:
             my_msg = self.console_input.pop(0)
         if self.socket in read:
-            peer_msg = self.recv()
+            peer_msg = self.recv()        
         return my_msg, peer_msg
 
     def output(self):

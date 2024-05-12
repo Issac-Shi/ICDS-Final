@@ -61,6 +61,11 @@ class ClientSM:
                     time_in = json.loads(myrecv(self.s))["results"]
                     self.out_msg += "Time is: " + time_in
 
+                elif my_msg == 'rank':
+                    mysend(self.s, json.dumps({"action":"rank"}))
+                    rank_in = json.loads(myrecv(self.s))["results"]
+                    self.out_msg += "Rank board: " + rank_in
+
                 elif my_msg == 'who':
                     mysend(self.s, json.dumps({"action":"list"}))
                     logged_in = json.loads(myrecv(self.s))["results"]

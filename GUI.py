@@ -169,7 +169,7 @@ class GUI:
         self.textCons.config(state = DISABLED)
         self.my_msg = msg
         self.entryMsg.delete(0, END)
-
+        
     def proc(self):
         while True:
             read, write, error = select.select([self.socket], [], [], 0)
@@ -180,8 +180,16 @@ class GUI:
             if len(self.my_msg) > 0 or len(peer_msg) > 0:
                 self.system_msg += self.sm.proc(self.my_msg, peer_msg)
                 self.my_msg = ""
+                # Ensure textCons is ready for modification
                 self.textCons.config(state = NORMAL)
+
+                # Clear all current text from textCons
+                self.textCons.delete(1.0, END)
+
+                # Insert the new message
                 self.textCons.insert(END, self.system_msg +"\n\n")      
+
+                # Set back to disabled to prevent further modification
                 self.textCons.config(state = DISABLED)
                 self.textCons.see(END)
 

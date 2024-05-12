@@ -1,8 +1,6 @@
 import time
 import socket
 import select
-import sys
-import string
 import indexer
 import json
 import pickle as pkl
@@ -129,8 +127,13 @@ class Server:
                 mysend(from_sock, json.dumps({"action":"poem", "results":poem}))
 
             elif msg["action"] == "time":
-                ctime = time.strftime('%y-%m-%d %h:%m', time.localtime())
+                # Time format: YYYY-MM-DD HH:MM
+                ctime = time.strftime("%Y-%m-%d %H:%M", time.gmtime())
                 mysend(from_sock, json.dumps({"action":"time", "results":ctime}))
+
+            elif msg["action"] == "rank":
+                rank_board = {"Issac": 13, "Lewis": 10, "Kenny": 14}
+                mysend(from_sock, json.dumps({"action":"rank", "results":str(rank_board)}))
 
             elif msg["action"] == "search":
                 term = msg["target"]

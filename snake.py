@@ -6,7 +6,6 @@ def run_snake_game():
     h = 500
     food_size = 10
     delay = 100
-    score = 0
 
     offsets = {
         "up": (0, 20),
@@ -16,7 +15,7 @@ def run_snake_game():
     }
 
     def reset():
-        global snake, snake_dir, food_position, pen
+        global snake, snake_dir, food_position
         snake = [[0, 0], [0, 20], [0, 40], [0, 60], [0, 80]]
         snake_dir = "up"
         food_position = get_random_food_position()
@@ -63,8 +62,8 @@ def run_snake_game():
             food_position = get_random_food_position()
             food.goto(food_position)
             return True
-        return False
-     
+        return False     
+
     def get_random_food_position():
         x = random.randint(-w / 2 + food_size, w / 2 - food_size)
         y = random.randint(-h / 2 + food_size, h / 2 - food_size)
