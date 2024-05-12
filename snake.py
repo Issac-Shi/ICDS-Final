@@ -15,15 +15,17 @@ def run_snake_game():
     }
 
     def reset():
-        global snake, snake_dir, food_position
+        global snake, snake_dir, food_position, score
         snake = [[0, 0], [0, 20], [0, 40], [0, 60], [0, 80]]
         snake_dir = "up"
         food_position = get_random_food_position()
         food.goto(food_position)
+        score = 0
+        update_score()
         move_snake()
 
     def move_snake():
-        global snake_dir
+        global snake_dir, score
      
         new_head = snake[-1].copy()
         new_head[0] = snake[-1][0] + offsets[snake_dir][0]
@@ -57,10 +59,12 @@ def run_snake_game():
             turtle.ontimer(move_snake, delay)
      
     def food_collision():
-        global food_position
+        global food_position, score
         if get_distance(snake[-1], food_position) < 20:
             food_position = get_random_food_position()
             food.goto(food_position)
+            score += 1
+            update_score()
             return True
         return False     
 
@@ -74,6 +78,13 @@ def run_snake_game():
         x2, y2 = pos2
         distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5
         return distance
+
+    def update_score():
+        pen.clear()
+        pen.penup()
+        pen.hideturtle()
+        pen.goto(0, h / 2 - 20)
+        pen.write("Score: {}".format(score), align="center", font=("Arial", 16, "normal"))
 
     def go_up():
         global snake_dir
